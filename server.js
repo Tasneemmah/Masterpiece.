@@ -129,7 +129,7 @@ app.post("/recordp", async function (req, res) {
   }
 });
 
-// ------------------restaurant ----------------------
+
 
 app.get("/generatedRes", async function (req, res) {
   try {
@@ -159,9 +159,7 @@ app.get("/recordpId", async function (req, res) {
 
 app.get("/recordrId/:id", async function (req, res) {
   try {
-    const id = req.params.id;
-    const currentRecord = await pool.query(
-      "SELECT * FROM restaurant WHERE restaurant_id = '" + id + "'"
+    const id = req.params.id
     );
     let res0 = currentRecord.rows;
     res.json(res0);
@@ -172,9 +170,7 @@ app.get("/recordrId/:id", async function (req, res) {
 app.get("/recordtable/:id", async function (req, res) {
   try {
     const id = req.params.id;
-    const currentRecord = await pool.query(
-      "SELECT * FROM res_table WHERE restaurant_id = '" + id + "' AND flags = '" + 1 + "' AND table_status = 'available' "
-    );
+    
     let res0 = currentRecord.rows;
     res.json(res0);
   } catch (err) {
@@ -196,10 +192,10 @@ app.put("/recordss/:userid", async function (req, res) {
 });
 
 // Get All restaurants
-app.get("/restaurants", async function (req, res) {
+app.get("/cleaning", async function (req, res) {
   try {
     const all_records = await pool.query(
-      "SELECT *  FROM restaurant JOIN users ON users.userid = restaurant.user_id WHERE users.flags = 1 ;"
+      "SELECT *  FROM cleaning JOIN users ON users.userid = cleaning.user_id WHERE users.flags = 1 ;"
     );
     res.json(all_records.rows);
   } catch (err) {
@@ -208,7 +204,7 @@ app.get("/restaurants", async function (req, res) {
 });
 
 let generatedId;
-app.post("/restaurants", async function (req, res) {
+app.post("/cleaning", async function (req, res) {
   try {
     const name = "";
     const phone = "";
@@ -227,8 +223,8 @@ app.post("/restaurants", async function (req, res) {
     const contact_number = "";
     const user_id = generatedId;
     const all_records0 = await pool.query(
-      "INSERT INTO restaurant (restaurant_name ,contact_number, user_id) VALUES($1, $2, $3) RETURNING *",
-      [restaurant_name, contact_number, user_id]
+      "INSERT INTO cleaning (cleaning_name ,contact_number, user_id) VALUES($1, $2, $3) RETURNING *",
+      [cleaning_name, contact_number, user_id]
     );
 
     const all = { user: all_records.rows, restaurant: all_records0.rows };
@@ -238,7 +234,7 @@ app.post("/restaurants", async function (req, res) {
   }
 });
 
-app.put("/restaurants/:userid", async function (req, res) {
+app.put("/cleaning/:userid", async function (req, res) {
   try {
     const { userid } = req.params;
     const deleteRecord = await pool.query(
@@ -291,33 +287,6 @@ app.put("/contactus00/:about_id", async function (req, res) {
   }
 });
 
-// Get All orders
-app.post("/orders", async function (req, res) {
-  try {
-    const email = req.body.email;
-    const table_number = req.body.tableNumber;
-    const order_time = req.body.time;
-    const order_date = req.body.date;
-    const userid = req.body.userid;
-    const restaurant_id = req.body.restaurant_id;
-    // console.log(userid);
-    const all_records = await pool.query(
-      "INSERT INTO orders (table_number,order_time, order_date ,user_id ,restaurant_id ,status ,guest_number ) VALUES($1, $2, $3 , $4,$5,$6,$7 ) RETURNING *",
-      [
-        table_number,
-        order_time,
-        order_date,
-        userid,
-        restaurant_id,
-        "pending",
-        2,
-      ]
-    );
-    res.json(all_records.rows);
-  } catch (err) {
-    console.log(err.message);
-  }
-});
 
 app.post("/contacts", async function (req, res) {
   try {
@@ -336,13 +305,11 @@ app.post("/contacts", async function (req, res) {
   }
 });
 
-// -------------razan res ----------------//
-
-// in home page of the user when I try to get the restaurants based on the food type from the restaurant table and render them in another page
-app.get("/restaurants/:type_food", (req, res) => {
+ 
+ app.get("/cleaning/:type_food", (req, res) => {
   const { type_food } = req.params;
   pool.query(
-    "SELECT * FROM restaurant WHERE type_food = $1",
+    "SELECT * FROM cleaning WHERE type_food = $1",
     [type_food],
     (error, results) => {
       if (error) {
@@ -353,28 +320,8 @@ app.get("/restaurants/:type_food", (req, res) => {
       }
     }
   );
-});
-// -------------razan contacts ----------------//
-// app.post("/contacts", async function (req, res) {
-//   console.log(req.body);
-//   try {
-//       const name = req.body.name;
-//       const email = req.body.email;
-//       const phone = req.body.phone;
-//       const message = req.body.message;
-
-//       const newRecord = await pool.query(
-//           "INSERT INTO contacts (name, phone, email, message) VALUES ($1, $2, $3, $4) RETURNING *",
-//           [name, phone, email, message]
-//       );
-
-//       res.json(newRecord.rows);
-//   } catch (err) {
-//       console.log(err.message);
-//   }
-// });
-
-// -------------razan about ----------------//
+ 
+ 
 // in the about page will get the content from the database
 app.get("/aboutus", async (req, res) => {
   try {
@@ -401,29 +348,28 @@ app.put("/aboutus", async (req, res) => {
   }
 });
 
-///----------------------------- amani -----------------------//
-// Add a new restaurant
-app.post("/restaurant", async function (req, res) {
+ 
+app.post("/cleaning", async function (req, res) {
   try {
     const {
-      restaurant_name,
+    cleaning_name,
       address,
       contact_number,
-      type_food,
+     
       des,
       img,
       food_image,
     } = req.body;
     const newRecord = await pool.query(
-      "INSERT INTO restaurant (restaurant_name, address, contact_number, type_food, des, img, food_image) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      "INSERT INTO restaurant (cleaning_name, address, contact_number, type_food, des, img, food_image) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
       [
-        restaurant_name,
+       cleaning_name,
         address,
         contact_number,
         type_food,
         des,
         img,
-        food_image,
+        
       ]
     );
 
@@ -433,37 +379,35 @@ app.post("/restaurant", async function (req, res) {
   }
 });
 
-// Get restaurant Information by Id
-app.get("/restaurant/:id", async function (req, res) {
+ app.get("/cleaning/:id", async function (req, res) {
   try {
     const { id } = req.params;
-    const restaurant = await pool.query(
-      "SELECT * FROM restaurant WHERE restaurant_id = $1",
+    const cleaning = await pool.query(
+      "SELECT * FROM cleaning WHERE cleaning_id = $1",
       [id]
     );
 
-    res.json(restaurant.rows);
+    res.json(cleaning.rows);
   } catch (err) {
     console.log(err.message);
   }
 });
 
-// Update restaurant's Info by Id
-app.put("/restaurant/:id", async function (req, res) {
+ app.put("/cleaning/:id", async function (req, res) {
   try {
     const { id } = req.params;
     const {
-      restaurant_name,
+     cleaning_name,
       address,
       contact_number,
       type_food,
       des,
       img,
-      food_image,
+     
       password,
     } = req.body;
     const updated_restaurant = await pool.query(
-      "UPDATE restaurant SET restaurant_name = $1, address = $2, contact_number = $3, type_food = $4, des = $5, img = $6, food_image = $7 WHERE restaurant_id = $8",
+      "UPDATE cleaning SETcleaning_name = $1, address = $2, contact_number = $3,   des = $5, img = $6, ,
       [
         restaurant_name,
         address,
@@ -482,33 +426,22 @@ app.put("/restaurant/:id", async function (req, res) {
     );
     console.log(updatePassword.rows);
 
-    res.json(updated_restaurant.rows);
+    res.json(updated_cleaning.rows);
   } catch (err) {
     console.log(err.message);
   }
 });
 
-// Add A table
-app.post("/table", async function (req, res) {
-  try {
-    const {
-      table_number,
-      available_time_start,
-      guest_number,
-      available_time_end,
-      img,
-      table_status,
-      restaurant_id,
-    } = req.body;
+ 
 
-    const check_table_number = await pool.query(
+    const check_clean_number = await pool.query(
       "SELECT * FROM res_table WHERE table_number = $1",
-      [table_number]
+      [clean_number]
     );
-    console.log(check_table_number.rows.length);
+    console.log(check_clean_number.rows.length);
     if (check_table_number.rows.length === 0) {
       const newRecord = await pool.query(
-        "INSERT INTO res_table (table_number, available_time_start, guest_number, available_time_end, img, table_status, restaurant_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+        "INSERT INTO res_table (clean_number, available_time_start, available_time_end, img, table_status, restaurant_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
         [
           table_number,
           available_time_start,
@@ -543,9 +476,9 @@ app.get("/orders/:id", async (req, res) => {
   }
 });
 
-/////////////////
+ 
 
-app.put("/tableStatus/:id", async (req, res) => {
+app.put("/ /:id", async (req, res) => {
   try {
     const { id } = req.params;
     const status = req.body.status;
@@ -593,8 +526,7 @@ app.put("/orders/:id", async (req, res) => {
   }
 });
 
-// ---------------- issa --------------------//
-// Add a new payment
+ // Add a new payment
 app.post("/payment", async function (req, res) {
   console.log(req.body);
   try {
@@ -658,8 +590,7 @@ app.get("/restaurantTables", async (req, res) => {
     console.log(err.message);
   }
 });
-// ------------------farah ------------------------//
-
+ 
 // get user data
 app.get("/user/:id", async function (req, res) {
   try {
@@ -691,8 +622,7 @@ app.put("/user/:id", async function (req, res) {
 
 
 
-// get user orders ******
-app.get("/userOrders/:id", async (req, res) => {
+ app.get("/userOrders/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
