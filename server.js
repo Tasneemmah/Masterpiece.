@@ -191,8 +191,7 @@ app.put("/recordss/:userid", async function (req, res) {
   }
 });
 
-// Get All restaurants
-app.get("/cleaning", async function (req, res) {
+ app.get("/cleaning", async function (req, res) {
   try {
     const all_records = await pool.query(
       "SELECT *  FROM cleaning JOIN users ON users.userid = cleaning.user_id WHERE users.flags = 1 ;"
